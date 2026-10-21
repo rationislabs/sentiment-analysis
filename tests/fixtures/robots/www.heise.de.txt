@@ -1,0 +1,766 @@
+User-agent: *
+# Misc.
+Disallow: /avw-bin/
+Disallow: /api/
+Disallow: /bestenlisten/galleries/
+Disallow: /bestenlisten/click*
+Disallow: /bilderstrecke/
+Disallow: /*/bilderstrecke/
+Disallow: /community*
+Allow: /community
+Disallow: /download/feed/
+Disallow: /extras/evileye/
+Disallow: /fastbin/
+Disallow: /forum/*
+Allow: /forum/
+Disallow: /foto/galerie/*
+Allow: /foto/galerie/
+Disallow: /home/
+Disallow: /ivw-bin/
+Disallow: /jeopardy-ctf/
+Disallow: /netze/netzwerk-tools/imonitor-internet-stoerungen/feed/
+Disallow: /netze/tools/whois/
+Disallow: /select/api/
+Disallow: /sso/
+Allow: /sso/login
+Disallow: /userdb/
+Disallow: /testtest/
+
+# Suche
+Disallow: /suche
+Disallow: /download/search
+Disallow: /netze/netzwerk-tools/imonitor-internet-stoerungen/stoerungsmeldungen-suchen/?*
+Disallow: /netze/netzwerk-tools/imonitor-internet-stoerungen/schnellsuche/?*
+Disallow: /bestenlisten/suche
+
+#heise online
+Sitemap: https://www.heise.de/sitemapindex.xml
+
+#bestenlisten
+Sitemap: https://www.heise.de/bestenlisten/sitemap-articles-index.xml.gz
+Sitemap: https://www.heise.de/bestenlisten/sitemap-authors.xml.gz
+Sitemap: https://www.heise.de/bestenlisten/sitemap-categories.xml.gz
+Sitemap: https://www.heise.de/bestenlisten/sitemap-news.xml.gz
+Sitemap: https://www.heise.de/bestenlisten/sitemap-stories-latest.xml.gz
+Sitemap: https://www.heise.de/bestenlisten/sitemap-topics.xml.gz
+
+User-agent: Mediapartners-Google*
+Disallow:
+
+# Ausnahmen
+User-agent: GPTBot
+Allow: /download/
+Allow: /solutions/
+Allow: /tipps-tricks/
+User-Agent: ChatGPT-User
+Allow: /download/
+Allow: /solutions/
+Allow: /tipps-tricks/
+User-Agent: OAI-SearchBot
+Allow: /download/
+Allow: /solutions/
+Allow: /tipps-tricks/
+User-agent: PerplexityBot
+Allow: /download/
+Allow: /solutions/
+Allow: /tipps-tricks/
+User-agent: Perplexity-User
+Allow: /download/
+Allow: /solutions/
+Allow: /tipps-tricks/
+User-agent: ClaudeBot
+Allow: /download/
+Allow: /solutions/
+Allow: /tipps-tricks/
+User-agent: Claude
+Allow: /download/
+Allow: /solutions/
+Allow: /tipps-tricks/
+User-agent: Claude-SearchBot
+Allow: /download/
+Allow: /solutions/
+Allow: /tipps-tricks/
+User-agent: Claude-User
+Allow: /download/
+Allow: /solutions/
+Allow: /tipps-tricks/
+User-agent: Claude-Web
+Allow: /download/
+Allow: /solutions/
+Allow: /tipps-tricks/
+User-agent: MistralAI-User
+Allow: /download/
+Allow: /solutions/
+Allow: /tipps-tricks/
+
+# Malicious Crawler
+User-agent: 5emeRue
+Disallow: /
+User-agent: 5erue
+Disallow: /
+User-agent: ACQUIRE MEDIA
+Disallow: /
+User-agent: ACTIV Financial (CME Group)
+Disallow: /
+User-agent: AddSearchBot
+Disallow: /
+User-agent: adequat
+Disallow: /
+User-agent: adequat-systems
+Disallow: /
+User-agent: AI2Bot
+Disallow: /
+User-agent: AlphaSense
+Disallow: /
+User-agent: Amazonbot
+Disallow: /
+User-agent: AmiSoftware
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+User-agent: Applebot
+Disallow: /
+User-agent: Applebot-Extended
+Disallow: /
+User-agent: Aqua_Products
+Disallow: /
+User-agent: ArgClrInt
+Disallow: /
+User-agent: Ask n read
+Disallow: /
+User-agent: asknread.com
+Disallow: /
+User-agent: asterias
+Disallow: /
+User-agent: Augure
+Disallow: /
+User-agent: auramundi
+Disallow: /
+User-agent: AwarioRssBot
+Disallow: /
+User-agent: AwarioSmartBot
+Disallow: /
+User-agent: b2w/0.1
+Disallow: /
+User-agent: BackDoorBot/1.0
+Disallow: /
+User-agent: Barchart.com
+Disallow: /
+User-agent: BattleFin
+Disallow: /
+User-agent: Bernin IT
+Disallow: /
+User-agent: bigsur.ai
+Disallow: /
+User-agent: Blackboard Safeassign
+Disallow: /
+User-agent: BlowFish/1.0
+Disallow: /
+User-agent: BLP_bbot
+Disallow: /
+User-agent: bluematrix
+Disallow: /
+User-agent: Bookmark search tool
+Disallow: /
+User-agent: BotALot
+Disallow: /
+User-agent: Brandwatch
+Disallow: /
+User-agent: Briefcase.news
+Disallow: /
+User-agent: Buck
+Disallow: /
+User-agent: BuiltBotTough
+Disallow: /
+User-agent: Bullseye/1.0
+Disallow: /
+User-agent: BunnySlippers
+Disallow: /
+User-agent: Bytespider
+Disallow: /
+User-Agent: ChatGPT-User
+Disallow: /
+User-agent: CCBot
+Disallow: /
+User-agent: CheeseBot
+Disallow: /
+User-agent: CherryPicker
+Disallow: /
+User-agent: CherryPickerElite/1.0
+Disallow: /
+User-agent: CherryPickerSE/1.0
+Disallow: /
+User-agent: CikisiBot
+Disallow: /
+User-agent: Cision
+Disallow: /
+User-agent: ClaudeBot
+Disallow: /
+User-agent: Claude
+Disallow: /
+User-agent: Claude-SearchBot
+Disallow: /
+User-agent: Claude-User
+Disallow: /
+User-agent: Claude-Web
+Disallow: /
+User-agent: CloudVertexBot
+Disallow: /
+User-agent: coexel
+Disallow: /
+User-agent: cohere-ai
+Disallow: /
+User-agent: cohere-training-data-crawler
+Disallow: /
+User-agent: Comtex News Network
+Disallow: /
+User-agent: ConveraCrawler
+Disallow: /
+User-agent: Copyright Licensing Agency
+Disallow: /
+User-agent: CopyRightCheck
+Disallow: /
+User-agent: Corporama
+Disallow: /
+User-agent: cosmos
+Disallow: /
+User-agent: Cotoyogi
+Disallow: /
+User-agent: Crescent
+Disallow: /
+User-agent: Crescent Internet ToolPak HTTP OLE Control v.1.0
+Disallow: /
+User-agent: D&B Hoovers
+Disallow: /
+User-agent: Data Expression
+Disallow: /
+User-agent: Data Observer
+Disallow: /
+User-agent: Dataminr
+Disallow: /
+User-agent: Datenbank Crawler
+Disallow: /
+User-agent: Dealogic
+Disallow: /
+User-agent: Devin
+Disallow: /
+User-agent: Diffbot
+Disallow: /
+User-agent: Digimind
+Disallow: /
+User-agent: DirectFN
+Disallow: /
+User-agent: DittoSpyder
+Disallow: /
+User-agent: DuckAssistBot
+Disallow: /
+User-agent: Dun & Bradstreet
+Disallow: /
+User-agent: Dun & Bradstreet - D&B ESG Intelligence
+Disallow: /
+User-agent: Dun & Bradstreet Data Marketplace
+Disallow: /
+User-agent: Eagle Alpha
+Disallow: /
+User-agent: ecoresearch
+Disallow: /
+User-agent: ellisphere
+Disallow: /
+User-agent: EmailCollector
+Disallow: /
+User-agent: EmailSiphon
+Disallow: /
+User-agent: EmailWolf
+Disallow: /
+User-agent: EroCrawler
+Disallow: /
+User-agent: ExtractorPro
+Disallow: /
+User-Agent: FacebookBot
+Disallow: /
+User-agent: FactSet
+Disallow: /
+User-agent: Factset_spyderbot
+Disallow: /
+User-agent: FairAd Client
+Disallow: /
+User-agent: FeedCheck
+Disallow: /
+User-agent: FeedReader
+Disallow: /
+User-agent: Feedspot
+Disallow: /
+User-agent: Fetch
+Disallow: /
+User-agent: Fitch Solutions
+Disallow: /
+User-agent: Flaming AttackBot
+Disallow: /
+User-agent: flipboard
+Disallow: /
+User-agent: Foobot
+Disallow: /
+User-agent: Founder Apabi
+Disallow: /
+User-agent: Freshbot
+Disallow: /
+User-agent: FriendlyCrawler
+Disallow: /
+User-agent: Gaisbot
+Disallow: /
+User-agent: GetRight/4.2
+Disallow: /
+User-agent: Gnowit
+Disallow: /
+User-agent: GnowitNewsbot
+Disallow: /
+User-agent: Google-Extended
+Disallow: /
+User-agent: GoogleOther
+Disallow: /
+User-agent: GPTBot
+Disallow: /
+User-agent: Ground News
+Disallow: /
+User-agent: grub
+Disallow: /
+User-agent: grub-client
+Disallow: /
+User-agent: Harvest/1.5
+Disallow: /
+User-agent: hloader
+Disallow: /
+User-agent: httplib
+Disallow: /
+User-agent: humanlinks
+Disallow: /
+User-agent: ICC-Crawler
+Disallow: /
+User-agent: ICE Connect Desktop Solution
+Disallow: /
+User-agent: ICE Data Services
+Disallow: /
+User-agent: IHS Markit
+Disallow: /
+User-agent: ImageSift
+Disallow: /
+User-agent: InfoNaviRobot
+Disallow: /
+User-agent: infoseek
+Disallow: /
+User-agent: Innguma
+Disallow: /
+User-agent: Inoreader
+Disallow: /
+User-agent: Iron33/1.0.2
+Disallow: /
+User-agent: ISI Emerging Markets
+Disallow: /
+User-agent: JennyBot
+Disallow: /
+User-agent: Jetbot
+Disallow: /
+User-agent: k2spider
+Disallow: /
+User-agent: Kangaroo Bot
+Disallow: /
+User-agent: KB Crawl SAS
+Disallow: /
+User-agent: kbcrawl
+Disallow: /
+User-agent: Kenjin Spider
+Disallow: /
+User-agent: Keyword Density/0.9
+Disallow: /
+User-agent: Knowings
+Disallow: /
+User-agent: Koyfin
+Disallow: /
+User-agent: larbin
+Disallow: /
+User-agent: Launchmetrics
+Disallow: /
+User-agent: leadbox
+Disallow: /
+User-agent: LexiBot
+Disallow: /
+User-agent: LexisNexis
+Disallow: /
+User-agent: Liana
+Disallow: /
+User-agent: libWeb/clsHTTP
+Disallow: /
+User-agent: libwww
+Disallow: /
+User-agent: LinerBot
+Disallow: /
+User-agent: LinkextractorPro
+Disallow: /
+User-agent: linkfluence
+Disallow: /
+User-agent: LinkScan/8.1a Unix
+Disallow: /
+User-agent: LinkWalker
+Disallow: /
+User-agent: LNSpiderguy
+Disallow: /
+User-agent: looksmart
+Disallow: /
+User-agent: lwp-trivial
+Disallow: /
+User-agent: lwp-trivial/1.34
+Disallow: /
+User-agent: magpie-crawler
+Disallow: /
+User-agent: Make/production
+Disallow: /
+User-agent: MarketResearch.com
+Disallow: /
+User-agent: MarketWatch
+Disallow: /
+User-agent: MarketWise
+Disallow: /
+User-agent: Markit Digital
+Disallow: /
+User-agent: Mata Hari
+Disallow: /
+User-agent: Mediatoolkitbot
+Disallow: /
+User-agent: Meltwater
+Disallow: /
+User-agent: mention
+Disallow: /
+User-agent: Meta-ExternalAgent
+Disallow: /
+User-agent: Meta-ExternalFetcher
+Disallow: /
+User-agent: Microsoft URL Control
+Disallow: /
+User-agent: Microsoft URL Control - 5.01.4511
+Disallow: /
+User-agent: Microsoft URL Control - 6.00.8169
+Disallow: /
+User-agent: MIIxpc
+Disallow: /
+User-agent: MIIxpc/4.2
+Disallow: /
+User-agent: Mister PiX
+Disallow: /
+User-agent: MistralAI-User
+Disallow: /
+User-agent: moduleQ
+Disallow: /
+User-agent: moget
+Disallow: /
+User-agent: moget/2.1
+Disallow: /
+User-agent: MONITIO
+Disallow: /
+User-agent: MoodleBot
+Disallow: /
+User-agent: Moody's
+Disallow: /
+User-agent: Moreover
+Disallow: /
+User-agent: MORNINGSTAR
+Disallow: /
+User-agent: MSIECrawler
+Disallow: /
+User-agent: MuckRack
+Disallow: /
+User-agent: mytwip
+Disallow: /
+User-agent: NetAnts
+Disallow: /
+User-agent: netEstate Imprint Crawler
+Disallow: /
+User-agent: NetMechanic
+Disallow: /
+User-agent: Netvibes
+Disallow: /
+User-agent: news-api.org
+Disallow: /
+User-agent: Newslitbot
+Disallow: /
+User-agent: NewsNow
+Disallow: /
+User-agent: Newzbin
+Disallow: /
+User-agent: NICErsPRO
+Disallow: /
+User-agent: Northern Light
+Disallow: /
+User-agent: Offline Explorer
+Disallow: /
+User-agent: OAI-SearchBot
+Disallow: /
+User-agent: omgili
+Disallow: /
+User-agent: omgilibot
+Disallow: /
+User-agent: Openbot
+Disallow: /
+User-agent: Openfind
+Disallow: /
+User-agent: Openfind data gathere
+Disallow: /
+User-agent: opinion-tracker
+Disallow: /
+User-agent: Opoint
+Disallow: /
+User-agent: Oracle Ultra Search
+Disallow: /
+User-agent: Orbis
+Disallow: /
+User-agent: PanguBot
+Disallow: /
+User-agent: Paqlebot
+Disallow: /
+User-agent: PerMan
+Disallow: /
+User-agent: PerplexityBot
+Disallow: /
+User-agent: Perplexity-User
+Disallow: /
+User-agent: PetalBot
+Disallow: /
+User-agent: Press Monitor Europe
+Disallow: /
+User-agent: PressEngineBot D
+Disallow: /
+User-agent: PriberamBot
+Disallow: /
+User-agent: ProPowerBot/2.14
+Disallow: /
+User-agent: proratainc
+Disallow: /
+User-agent: ProWebWalker
+Disallow: /
+User-agent: proxem
+Disallow: /
+User-agent: psbot
+Disallow: /
+User-agent: Python-urllib
+Disallow: /
+User-agent: QualifiedBot
+Disallow: /
+User-agent: QueryN Metasearch
+Disallow: /
+User-agent: QuoteMedia
+Disallow: /
+User-agent: Qwam content intelligence
+Disallow: /
+User-agent: Radiation Retriever 1.1
+Disallow: /
+User-agent: RankurBot
+Disallow: /
+User-agent: RavenPack
+Disallow: /
+User-agent: RepoMonkey
+Disallow: /
+User-agent: RepoMonkey Bait & Tackle/v1.01
+Disallow: /
+User-agent: ReportLinker
+Disallow: /
+User-agent: Research & Markets
+Disallow: /
+User-agent: RMA
+Disallow: /
+User-agent: S&P Capital IQ
+Disallow: /
+User-agent: S&P Global Market Intelligence
+Disallow: /
+User-agent: S&P Global Marketplace
+Disallow: /
+User-agent: scoop.it
+Disallow: /
+User-agent: scoopit
+Disallow: /
+User-agent: scoopit-crawler
+Disallow: /
+User-agent: score3
+Disallow: /
+User-agent: ScoutJet
+Disallow: /
+User-agent: scpitspi-rs
+Disallow: /
+User-agent: searchpreview
+Disallow: /
+User-Agent: Seekport
+Disallow: /
+User-agent: semantic-visions.com
+Disallow: /
+User-agent: semantic-visions.com crawler
+Disallow: /
+User-agent: SentiBot
+Disallow: /
+User-agent: SentiOne
+Disallow: /
+User-agent: Signal Insights
+Disallow: /
+User-agent: Sindup
+Disallow: /
+User-agent: sitecheck.internetseer.com
+Disallow: /
+User-agent: SiteSnagger
+Disallow: /
+User-agent: smartkarma
+Disallow: /
+User-agent: Sociallymap
+Disallow: /
+User-agent: SpankBot
+Disallow: /
+User-agent: spanner
+Disallow: /
+User-agent: spotter
+Disallow: /
+User-agent: Sprinklr
+Disallow: /
+User-agent: squirrobot
+Disallow: /
+User-agent: Statista
+Disallow: /
+User-agent: STOCKBOARD
+Disallow: /
+User-agent: suzuran
+Disallow: /
+User-agent: Synthesio
+Disallow: /
+User-agent: Szukacz/1.4
+Disallow: /
+User-agent: Talkwater
+Disallow: /
+User-agent: Teleport
+Disallow: /
+User-agent: TeleportPro
+Disallow: /
+User-agent: Telesoft
+Disallow: /
+User-agent: telpress.it
+Disallow: /
+User-agent: The Intraformant
+Disallow: /
+User-agent: TheNomad
+Disallow: /
+User-agent: Thomson Reuters
+Disallow: /
+User-agent: Thomson Reuters WestLaw
+Disallow: /
+User-agent: Timpibot
+Disallow: /
+User-agent: toCrawl/UrlDispatcher
+Disallow: /
+User-agent: TraderPlanet
+Disallow: /
+User-agent: Tradingcharts.com
+Disallow: /
+User-agent: TradingView
+Disallow: /
+User-agent: Transform Your API
+Disallow: /
+User-agent: trendeo
+Disallow: /
+User-agent: trendictionbot
+Disallow: /
+User-agent: trendybuzz
+Disallow: /
+User-agent: True_Robot
+Disallow: /
+User-agent: True_Robot/1.0
+Disallow: /
+User-agent: turingos
+Disallow: /
+User-agent: TurnitinBot
+Disallow: /
+User-agent: um-FC
+Disallow: /
+User-agent: um-IC
+Disallow: /
+User-agent: um-LN
+Disallow: /
+User-agent: UptimeRobot
+Disallow: /
+User-agent: URL Control
+Disallow: /
+User-agent: URL_Spider_Pro
+Disallow: /
+User-agent: URLy Warning
+Disallow: /
+User-agent: Vable Ltd
+Disallow: /
+User-agent: VCI
+Disallow: /
+User-agent: VCI WebViewer VCI WebViewer Win32
+Disallow: /
+User-agent: vecteurplus
+Disallow: /
+User-agent: verticalsearch
+Disallow: /
+User-agent: VISIBRAIN
+Disallow: /
+User-agent: vsw
+Disallow: /
+User-agent: Web Image Collector
+Disallow: /
+User-agent: WebAuto
+Disallow: /
+User-agent: WebBandit
+Disallow: /
+User-agent: WebBandit/3.50
+Disallow: /
+User-agent: WebCopier
+Disallow: /
+User-agent: WebEnhancer
+Disallow: /
+User-agent: WebmasterWorldForumBot
+Disallow: /
+User-agent: WebSauger
+Disallow: /
+User-agent: Website Quester
+Disallow: /
+User-agent: Webster Pro
+Disallow: /
+User-agent: WebStripper
+Disallow: /
+User-agent: webzio
+Disallow: /
+User-agent: Webzio-Extended
+Disallow: /
+User-agent: WebZip
+Disallow: /
+User-agent: WebZip/4.0
+Disallow: /
+User-agent: Wget
+Disallow: /
+User-agent: Wget/1.5.3
+Disallow: /
+User-agent: Wget/1.6
+Disallow: /
+User-agent: winello
+Disallow: /
+User-agent: WWW-Collector-E
+Disallow: /
+User-agent: Xenu's
+Disallow: /
+User-agent: Xenu's Link Sleuth 1.1c
+Disallow: /
+User-agent: YaK
+Disallow: /
+User-agent: YCHARTS
+Disallow: /
+User-agent: YouBot
+Disallow: /
+User-agent: Youmag
+Disallow: /
+User-agent: Zealbot
+Disallow: /
+User-agent: Zeus
+Disallow: /
+User-agent: Zeus 32297 Webster Pro V2.9 Win32
+Disallow: /
+User-agent: Zeus Link Scout
+Disallow: /
+User-agent: Zite
+Disallow: /
+
+# Legal notice: heise.de expressly reserves the right to use any content credited with dpa or Picture-Alliance for commercial text and data mining according to § 44b UrhG, AI-Training and similar technologies.

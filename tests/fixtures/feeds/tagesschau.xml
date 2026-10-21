@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>tagesschau.de</title>
+    <link>https://www.tagesschau.de/</link>
+    <description>Invented test feed</description>
+    <language>de</language>
+    <item>
+      <title>Gemeinderat beschließt neue Radwege nach langer Debatte</title>
+      <link>https://www.tagesschau.de/inland/fixture-meldung-0-100.html</link>
+      <description>Eine kurze erfundene Zusammenfassung für die Testdaten.</description>
+      <pubDate>Thu, 08 Oct 2026 12:00:00 +0200</pubDate>
+      <guid>00000000-0000-4000-8000-000000000000</guid>
+      <dc:date>2026-10-08T12:00:00Z</dc:date>
+      <content:encoded><![CDATA[<p><a href="https://www.tagesschau.de/inland/fixture-meldung-0-100.html"><img src="https://images.tagesschau.de/fixture/0.jpg" alt="" /></a><br/><b>Eine kurze erfundene Zusammenfassung für die Testdaten.</b></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Forschende testen leisere Motoren für Regionalzüge</title>
+      <link>https://www.tagesschau.de/inland/fixture-meldung-1-100.html</link>
+      <description>Eine kurze erfundene Zusammenfassung für die Testdaten.</description>
+      <pubDate>Thu, 08 Oct 2026 11:07:00 +0200</pubDate>
+      <guid>00000000-0000-4000-8000-000000000001</guid>
+      <dc:date>2026-10-08T11:07:00Z</dc:date>
+      <content:encoded><![CDATA[<p><a href="https://www.tagesschau.de/inland/fixture-meldung-1-100.html"><img src="https://images.tagesschau.de/fixture/1.jpg" alt="" /></a><br/><b>Eine kurze erfundene Zusammenfassung für die Testdaten.</b></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Hafenfest kehrt mit kleinerem Programm zurück</title>
+      <link>https://www.tagesschau.de/inland/fixture-meldung-2-100.html</link>
+      <description>Eine kurze erfundene Zusammenfassung für die Testdaten.</description>
+      <pubDate>Thu, 08 Oct 2026 10:14:00 +0200</pubDate>
+      <guid>00000000-0000-4000-8000-000000000002</guid>
+      <dc:date>2026-10-08T10:14:00Z</dc:date>
+      <content:encoded><![CDATA[<p><a href="https://www.tagesschau.de/inland/fixture-meldung-2-100.html"><img src="https://images.tagesschau.de/fixture/2.jpg" alt="" /></a><br/><b>Eine kurze erfundene Zusammenfassung für die Testdaten.</b></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Bibliothek verlängert die Öffnungszeiten in der Prüfungszeit</title>
+      <link>https://www.tagesschau.de/inland/fixture-meldung-3-100.html</link>
+      <description>Eine kurze erfundene Zusammenfassung für die Testdaten.</description>
+      <pubDate>Thu, 08 Oct 2026 09:21:00 +0200</pubDate>
+      <guid>00000000-0000-4000-8000-000000000003</guid>
+      <dc:date>2026-10-08T09:21:00Z</dc:date>
+      <content:encoded><![CDATA[<p><a href="https://www.tagesschau.de/inland/fixture-meldung-3-100.html"><img src="https://images.tagesschau.de/fixture/3.jpg" alt="" /></a><br/><b>Eine kurze erfundene Zusammenfassung für die Testdaten.</b></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Bauern melden frühe Apfelernte im Norden</title>
+      <link>https://www.tagesschau.de/inland/fixture-meldung-4-100.html</link>
+      <description>Eine kurze erfundene Zusammenfassung für die Testdaten.</description>
+      <pubDate>Thu, 08 Oct 2026 08:28:00 +0200</pubDate>
+      <guid>00000000-0000-4000-8000-000000000004</guid>
+      <dc:date>2026-10-08T08:28:00Z</dc:date>
+      <content:encoded><![CDATA[<p><a href="https://www.tagesschau.de/inland/fixture-meldung-4-100.html"><img src="https://images.tagesschau.de/fixture/4.jpg" alt="" /></a><br/><b>Eine kurze erfundene Zusammenfassung für die Testdaten.</b></p>]]></content:encoded>
+    </item>
+  </channel>
+</rss>

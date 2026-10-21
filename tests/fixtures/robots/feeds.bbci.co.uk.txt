@@ -1,0 +1,27 @@
+
+# version: f89f4a049901125dcd06cc1502ae1ea86985b4a6
+
+# feeds.bbci.co.uk
+User-agent: *
+Disallow: /cgi-bin
+Disallow: /cgi-perl
+Disallow: /lexaurus
+Disallow: /mpapps
+Disallow: /mpsearch
+Disallow: /mtk
+Disallow: /weatherbeta
+Disallow: /weather/hi/about/newsid_7760000/7760846.stm
+Disallow: /1/hi/help/8594343.stm 
+Disallow: /2/hi/help/8594343.stm
+Disallow: /1/hi/help/8594488.stm
+Disallow: /2/hi/help/8594488.stm
+Disallow: /1/hi/uk/1494064.stm
+Disallow: /1/hi/health/363959.stm
+Disallow: /1/hi/health/4749331.stm
+Disallow: /1/hi/england/1678616.stm
+Disallow: /1/hi/education/3826037.stm
+Disallow: /1/shared/spl/hi/pop_ups/05/uk_should_the_uk_vote_on_the_eu_constitution0/html/8.stm
+Disallow: /1/hi/england/beds/bucks/herts/3663494.stm
+Disallow: /2/hi/uk_news/england/beds/bucks/herts/3663494.stm
+Sitemap: http://news.bbc.co.uk/weather/sitemap.xml 
+Sitemap: http://news.bbc.co.uk/weather/sitemap_mobile.xml 

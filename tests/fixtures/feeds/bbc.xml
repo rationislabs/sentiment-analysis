@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title><![CDATA[BBC News]]></title>
+    <description><![CDATA[Invented test feed]]></description>
+    <link>https://www.bbc.co.uk/news/world</link>
+    <lastBuildDate>Thu, 08 Oct 2026 13:00:00 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[City council approves new cycling lanes after long debate]]></title>
+      <description><![CDATA[A short invented summary for the test fixture.]]></description>
+      <link>https://www.bbc.co.uk/news/articles/cfixture000o?at_medium=RSS&amp;at_campaign=rss</link>
+      <guid isPermaLink="false">https://www.bbc.co.uk/news/articles/cfixture000o#0</guid>
+      <pubDate>Thu, 08 Oct 2026 12:00:00 GMT</pubDate>
+      <media:thumbnail width="240" height="134" url="https://ichef.bbci.co.uk/ace/standard/240/fixture-0.jpg"/>
+    </item>
+    <item>
+      <title><![CDATA[Researchers test quieter engines for regional trains]]></title>
+      <description><![CDATA[A short invented summary for the test fixture.]]></description>
+      <link>https://www.bbc.co.uk/news/articles/cfixture001o?at_medium=RSS&amp;at_campaign=rss</link>
+      <guid isPermaLink="false">https://www.bbc.co.uk/news/articles/cfixture001o#0</guid>
+      <pubDate>Thu, 08 Oct 2026 11:07:00 GMT</pubDate>
+      <media:thumbnail width="240" height="134" url="https://ichef.bbci.co.uk/ace/standard/240/fixture-1.jpg"/>
+    </item>
+    <item>
+      <title><![CDATA[Harbour festival returns with a smaller programme this year]]></title>
+      <description><![CDATA[A short invented summary for the test fixture.]]></description>
+      <link>https://www.bbc.co.uk/news/articles/cfixture002o?at_medium=RSS&amp;at_campaign=rss</link>
+      <guid isPermaLink="false">https://www.bbc.co.uk/news/articles/cfixture002o#0</guid>
+      <pubDate>Thu, 08 Oct 2026 10:14:00 GMT</pubDate>
+      <media:thumbnail width="240" height="134" url="https://ichef.bbci.co.uk/ace/standard/240/fixture-2.jpg"/>
+    </item>
+    <item>
+      <title><![CDATA[Library extends opening hours during exam season]]></title>
+      <description><![CDATA[A short invented summary for the test fixture.]]></description>
+      <link>https://www.bbc.co.uk/news/articles/cfixture003o?at_medium=RSS&amp;at_campaign=rss</link>
+      <guid isPermaLink="false">https://www.bbc.co.uk/news/articles/cfixture003o#0</guid>
+      <pubDate>Thu, 08 Oct 2026 09:21:00 GMT</pubDate>
+      <media:thumbnail width="240" height="134" url="https://ichef.bbci.co.uk/ace/standard/240/fixture-3.jpg"/>
+    </item>
+    <item>
+      <title><![CDATA[Farmers report an early apple harvest in the north]]></title>
+      <description><![CDATA[A short invented summary for the test fixture.]]></description>
+      <link>https://www.bbc.co.uk/news/articles/cfixture004o?at_medium=RSS&amp;at_campaign=rss</link>
+      <guid isPermaLink="false">https://www.bbc.co.uk/news/articles/cfixture004o#0</guid>
+      <pubDate>Thu, 08 Oct 2026 08:28:00 GMT</pubDate>
+      <media:thumbnail width="240" height="134" url="https://ichef.bbci.co.uk/ace/standard/240/fixture-4.jpg"/>
+    </item>
+  </channel>
+</rss>

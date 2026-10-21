@@ -1,0 +1,60 @@
+[project]
+name = "sentiment-analysis"
+version = "0.1.0"
+description = "German and English news-headline sentiment: a polite scraping pipeline and an honest model comparison"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "httpx>=0.28,<1",
+  "protego>=0.7,<1",
+  "feedparser>=6.0.14,<7",
+  "beautifulsoup4>=4.15,<5",
+  "lxml>=6.1,<7",
+  "pyyaml>=6.0,<7",
+  "pandas>=3.0,<4",
+  "pyarrow>=26.0.0",
+  "scikit-learn>=1.9,<2",
+  "vaderSentiment>=3.3.2,<4",
+  "huggingface_hub>=2.2,<3",
+  "streamlit>=1.65,<2",
+]
+
+[tool.uv]
+package = false
+environments = ["sys_platform == 'linux'"]  # Actions, Streamlit Cloud and the owner's machine
+
+[dependency-groups]
+dev = [
+  "pytest>=9.1",
+  "respx>=0.23",
+  "ruff>=0.17.1",
+  "invoke>=2.2",
+]
+bert = [
+  "torch>=2.14,<3",
+  "transformers>=5.20.1,<6",
+]
+train = [
+  "datasets>=5.1,<6",
+]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib -ra -m 'not slow'"
+pythonpath = ["."]  # sentiment/ and train/ are not installed (package = false)
+markers = ["slow: needs the bert group and downloads the 542 MB base model"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]  # ruff format owns line length; long string literals are allowed

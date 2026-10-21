@@ -1,0 +1,39 @@
+# don't index redirects
+User-Agent: *
+Disallow: /full
+
+# these robots have been bad once:
+
+user-agent: stress-agent
+Disallow: /
+
+User-agent: fast
+Disallow: /
+
+User-agent: Scooter
+Disallow: /
+
+User-agent: AhrefsBot
+Crawl-Delay: 1800
+
+User-agent: magpie-crawler
+User-agent: CCBot
+User-agent: GPTBot
+User-agent: FacebookBot
+User-Agent: omgili
+User-Agent: omgilibot
+User-agent: anthropic-ai
+User-agent: Claude-Web
+User-agent: ClaudeBot
+User-agent: cohere-ai
+User-agent: Google-Extended
+User-agent: Bytespider
+User-agent: PetalBot
+User-agent: Diffbot
+User-Agent: PerplexityBot
+User-agent: YouBot
+Disallow: /
+
+# dont index oonmedia docs
+User-agent: *
+Disallow: /oon/media/

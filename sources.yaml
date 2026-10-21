@@ -1,0 +1,37 @@
+# One entry per site. Switches, per site:
+#   frontpage: true   rank, section and lead story from the front page (default on)
+#   body: false       score the article text too (default off; the text is never stored)
+# You are responsible for switching body scraping on. Nothing here can switch the
+# politeness gate off (sentiment/polite.py): robots.txt, AI/TDM crawler blocks,
+# rights-reservation text and TDMRep always win.
+- name: bbc
+  lang: en
+  rss: https://feeds.bbci.co.uk/news/world/rss.xml
+  frontpage_url: https://www.bbc.com/news
+- name: guardian
+  lang: en
+  rss: https://www.theguardian.com/world/rss
+  frontpage_url: https://www.theguardian.com/international
+- name: hn
+  lang: en
+  rss: https://news.ycombinator.com/rss
+  frontpage_url: https://news.ycombinator.com/
+  selectors:
+    item: tr.athing
+    link: span.titleline > a
+- name: tagesschau
+  lang: de
+  rss: https://www.tagesschau.de/index~rss2.xml
+  frontpage_url: https://www.tagesschau.de/
+- name: orf
+  lang: de
+  rss: https://rss.orf.at/news.xml
+  frontpage_url: https://orf.at/
+- name: derstandard
+  lang: de
+  rss: https://www.derstandard.at/rss
+  frontpage_url: https://www.derstandard.at/
+- name: heise
+  lang: de
+  rss: https://www.heise.de/rss/heise-atom.xml
+  frontpage_url: https://www.heise.de/

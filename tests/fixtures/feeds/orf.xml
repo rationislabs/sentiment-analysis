@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:orfon="http://rss.orf.at/1.0/" xmlns="http://purl.org/rss/1.0/">
+  <channel rdf:about="https://orf.at/">
+    <title>news.ORF.at</title>
+    <link>https://orf.at/</link>
+    <description>Invented test feed</description>
+  </channel>
+  <item rdf:about="https://orf.at/stories/3400000/">
+    <title>Gemeinderat beschließt neue Radwege nach langer Debatte</title>
+    <link>https://orf.at/stories/3400000/</link>
+    <dc:subject>Fixture</dc:subject>
+    <dc:date>2026-10-08T14:00:00+02:00</dc:date>
+    <orfon:usid>news:3400000</orfon:usid>
+    <orfon:storyType rdf:resource="urn:orfon:type:ticker" />
+  </item>
+  <item rdf:about="https://orf.at/stories/3400001/">
+    <title>Forschende testen leisere Motoren für Regionalzüge</title>
+    <link>https://orf.at/stories/3400001/</link>
+    <dc:subject>Fixture</dc:subject>
+    <dc:date>2026-10-08T13:07:00+02:00</dc:date>
+    <orfon:usid>news:3400001</orfon:usid>
+    <orfon:storyType rdf:resource="urn:orfon:type:ticker" />
+  </item>
+  <item rdf:about="https://orf.at/stories/3400002/">
+    <title>Hafenfest kehrt mit kleinerem Programm zurück</title>
+    <link>https://orf.at/stories/3400002/</link>
+    <dc:subject>Fixture</dc:subject>
+    <dc:date>2026-10-08T12:14:00+02:00</dc:date>
+    <orfon:usid>news:3400002</orfon:usid>
+    <orfon:storyType rdf:resource="urn:orfon:type:ticker" />
+  </item>
+  <item rdf:about="https://orf.at/stories/3400003/">
+    <title>Bibliothek verlängert die Öffnungszeiten in der Prüfungszeit</title>
+    <link>https://orf.at/stories/3400003/</link>
+    <dc:subject>Fixture</dc:subject>
+    <dc:date>2026-10-08T11:21:00+02:00</dc:date>
+    <orfon:usid>news:3400003</orfon:usid>
+    <orfon:storyType rdf:resource="urn:orfon:type:ticker" />
+  </item>
+  <item rdf:about="https://orf.at/stories/3400004/">
+    <title>Bauern melden frühe Apfelernte im Norden</title>
+    <link>https://orf.at/stories/3400004/</link>
+    <dc:subject>Fixture</dc:subject>
+    <dc:date>2026-10-08T10:28:00+02:00</dc:date>
+    <orfon:usid>news:3400004</orfon:usid>
+    <orfon:storyType rdf:resource="urn:orfon:type:ticker" />
+  </item>
+</rdf:RDF>

@@ -1,0 +1,4 @@
+# The model the pipeline scores with, per language. `uv run inv evaluate` rewrites this with
+# the winner on the gold dev split. Until then: TF-IDF, the cheapest model for both languages.
+de: tfidf
+en: tfidf

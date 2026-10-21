@@ -1,0 +1,138 @@
+User-agent: *
+Disallow: /ardimport/
+Disallow: /*~player.html
+Disallow: /suche2.html?*
+
+User-agent: webzip
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: webwhacker
+Disallow: /
+
+User-agent: websauger
+Disallow: /
+
+User-agent: webcapture
+Disallow: /
+
+User-agent: teleport
+Disallow: /
+
+User-agent: sitesnagger
+Disallow: /
+
+User-agent: net attache
+Disallow: /
+
+User-agent: httrack
+Disallow: /
+
+############
+# Nutzungsvorbehalt / Reservation of Rights (Opt-Out) ARD
+# Stand: 19.05.2026
+
+### AI Training
+
+# Apple
+User-agent: applebot-extended
+Disallow: /
+
+# ByteDance
+User-agent: bytespider
+Disallow: /
+
+# Common Crawl
+User-agent: ccbot
+Disallow: /
+
+# Anthropic
+User-agent: claudebot
+Disallow: /
+
+# Google
+User-agent: google-extended
+Disallow: /
+
+# Cohere
+User-agent: cohere-training-data-crawler
+Disallow: /
+
+# DeepSeek
+User-agent: deepseekbot
+Disallow: /
+
+User-agent: deepseek
+Disallow: /
+
+User-agent: deepseek-crawler
+Disallow: /
+
+# Diffbot
+User-agent: diffbot
+Disallow: /
+
+# Meta
+User-agent: facebookbot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+# OpenAI
+User-agent: gptbot
+Disallow: /
+
+# xAI
+User-agent: grokbot
+Disallow: /
+
+# LAION
+User-agent: img2dataset
+Disallow: /
+
+User-agent: laiondownloader
+Disallow: /
+
+# Mistral AI
+User-agent: mistralai-crawler
+Disallow: /
+
+# Webz.io
+User-agent: omgili
+Disallow: /
+
+User-agent: omgilibot
+Disallow: /
+
+# Huawei
+User-agent: pangubot
+Disallow: /
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Legal Notice / Rechtshinweis
+#
+# The operator of this website expressly reserves the right pursuant to
+# § 44b(3) UrhG (German Copyright Act) to prohibit the use of its content
+# for text and data mining.
+#
+# The automated collection, extraction, reproduction, or use of content
+# from this website for the purpose of training, fine-tuning, or
+# otherwise developing artificial intelligence models or systems is
+# strictly prohibited without prior written consent. This prohibition
+# extends to third-party service providers acting on behalf of or
+# supplying data to AI developers. Such third parties may be held
+# jointly liable for any unauthorized access or use of content in
+# violation of this notice.
+#
+# This restriction does not apply to automated access for the sole
+# purpose of retrieval-augmented generation (RAG) or grounding, provided
+# that such access complies with the technical directives specified in
+# this file and that the content is attributed to its original source.
+#
+# For inquiries or permission requests, please contact:
+# webmaster@tagesschau.de
+############

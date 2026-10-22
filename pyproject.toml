@@ -16,6 +16,8 @@ dependencies = [
   "vaderSentiment>=3.3.2,<4",
   "huggingface_hub>=2.2,<3",
   "streamlit>=1.65,<2",
+  "skops>=0.16.0,<0.17",  # the saved-model format may change between 0.x releases
+  "defusedxml>=0.7.1,<0.8",
 ]
 
 [tool.uv]

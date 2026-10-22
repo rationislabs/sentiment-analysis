@@ -2,14 +2,16 @@
 text, or None where the model cannot score that language. The pipeline scores each language
 with the model model.yaml names (the evaluation's winner).
 
-The TF-IDF files are joblib pickles: load them only from your own model repo."""
+The TF-IDF files are skops files, not pickles: loading one cannot run code, and the pipeline
+downloads only the model-repo commit that models.lock pins."""
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
-import joblib
+import skops.io
 import yaml
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -20,7 +22,7 @@ from .rows import LABELS
 NAMES = ("vader", "tfidf", "distilbert")  # cheapest first: the tie-break order
 LANGS = ("de", "en")
 MAX_LEN = 64
-TFIDF_FILE = "tfidf-{lang}.joblib"
+TFIDF_FILE = "tfidf-{lang}.skops"
 BERT_DIR = "distilbert"
 CHOICE_HEADER = (
     "# The model the pipeline scores with, per language. `uv run inv evaluate` rewrites this\n"
@@ -74,7 +76,7 @@ class Tfidf:
     @classmethod
     def load(cls, model_dir: Path) -> Tfidf | None:
         pipes = {
-            lang: joblib.load(p)
+            lang: skops.io.load(p)  # refuses any type outside skops' trusted set
             for lang in LANGS
             if (p := model_dir / TFIDF_FILE.format(lang=lang)).exists()
         }
@@ -172,3 +174,17 @@ def write_choice(path: Path, winners: dict[str, str | None]) -> None:
     choice = read_choice(path)
     choice.update({lang: name for lang, name in winners.items() if name})
     path.write_text(CHOICE_HEADER + yaml.safe_dump(choice, sort_keys=True))
+
+
+def read_revision(path: Path) -> str | None:
+    """The model-repo commit the pipeline loads (models.lock), or None before the first push."""
+    if not path.exists():
+        return None
+    rev = path.read_text().strip()
+    if not re.fullmatch(r"[0-9a-f]{40}", rev):
+        raise ValueError(f"{path}: needs a 40-character commit hash, not {rev!r}")
+    return rev
+
+
+def write_revision(path: Path, rev: str) -> None:
+    path.write_text(rev + "\n")

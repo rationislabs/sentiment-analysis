@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -10,6 +11,14 @@ import pandas as pd
 
 from .rows import LABELS
 from .store import GOLD_DTYPES, split_of
+
+_MARKDOWN = re.compile(r"([!-/:-@\[-`{-~])")  # every ASCII punctuation character
+
+
+def plain_markdown(text: str) -> str:
+    """text that Streamlit's markdown shows as written: no image, link, colour or maths."""
+    return _MARKDOWN.sub(r"\\\1", text)
+
 
 GOLD_TARGET = 600
 RELABEL_N = 50

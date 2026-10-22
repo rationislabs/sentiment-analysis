@@ -320,11 +320,59 @@ def test_gate_refusal_type_is_the_gates():
     assert collect.Refused is polite.Refused
 
 
-def test_body_time_budget_stops_scraping(gate, web, monkeypatch):
-    monkeypatch.setattr(collect, "BODY_BUDGET", 20.0)  # each article costs >= 10 s of waits
+def test_the_run_deadline_stops_body_scraping(gate, web):
     serve_hn(web)
     serve_articles(web, f"<html><p>{LONG}</p></html>")
-    rows, report = collect.collect(body_source(), gate, NOW, score_body=lambda t, lang: "neutral")
+    deadline = gate.now() + 45.0  # the feed and each article cost >= 10 s of waits
+    rows, report = collect.collect(
+        body_source(), gate, NOW, score_body=lambda t, lang: "neutral", deadline=deadline
+    )
     scored = sum(r["body_label"] is not None for r in rows)
     assert 1 <= scored < 30
-    assert report.errors == [f"body: time budget spent, {30 - scored} skipped"]
+    assert report.errors == [f"body: run deadline reached, {30 - scored} skipped"]
+
+
+def test_a_source_after_the_deadline_is_skipped_without_a_request(gate, web):
+    route = web.get(url__regex=r".*").respond(500)
+    rows, report = collect.collect(HN, gate, NOW, deadline=gate.now() - 1)
+    assert rows == [] and report.errors == ["skipped: run deadline reached"]
+    assert not route.called
+
+
+def test_a_broken_front_page_keeps_the_feed_rows(gate, web):
+    serve_hn(web)
+    broken = Source(**{**HN.__dict__, "selectors": {"item": "tr[[", "link": "a"}})
+    rows, report = collect.collect(broken, gate, NOW)
+    assert len(rows) == 30
+    assert report.errors and report.errors[0].startswith("front page:")
+
+
+def test_feed_links_that_are_not_web_pages_are_dropped(gate, web):
+    web.get("https://x.test/robots.txt").respond(200, text=ALLOW_ALL)
+    web.get("https://x.test/rss").respond(
+        200,
+        text=(
+            "<rss><channel>"
+            "<item><title>ok</title><link>https://x.test/a</link></item>"
+            "<item><title>bad</title><link>javascript:alert(1)</link></item>"
+            "</channel></rss>"
+        ),
+    )
+    rows, _ = collect.collect(Source(name="x", lang="en", rss="https://x.test/rss"), gate, NOW)
+    assert [r["title"] for r in rows] == ["ok"]
+
+
+BOMB = (
+    '<?xml version="1.0"?><!DOCTYPE r [<!ENTITY a "aaaaaaaaaa">'
+    + "".join(f'<!ENTITY {chr(98 + i)} "{("&" + chr(97 + i) + ";") * 10}">' for i in range(8))
+    + "]><rss><channel><item><title>&i;</title><link>https://x.test/a</link></item>"
+    "</channel></rss>"
+)
+
+
+def test_a_feed_that_expands_entities_is_refused(gate, web):
+    # Nested entities ("billion laughs"): ten levels of ten would be 10 GB of title.
+    web.get("https://x.test/robots.txt").respond(200, text=ALLOW_ALL)
+    web.get("https://x.test/rss").respond(200, text=BOMB)
+    rows, report = collect.collect(Source(name="x", lang="en", rss="https://x.test/rss"), gate, NOW)
+    assert rows == [] and report.refused == {"unsafe-xml": 1}

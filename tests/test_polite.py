@@ -189,6 +189,69 @@ def test_tdmrep_file_reservation(gate, web):
     assert e.value.reason == "tdmrep"
 
 
+def test_tdmrep_location_is_a_prefix_like_robots_txt():
+    assert polite.tdmrep_reserves([{"location": "/", "tdm-reservation": 1}], "/world/article")
+    assert polite.tdmrep_reserves([{"location": "/news", "tdm-reservation": 1}], "/news/a")
+    assert not polite.tdmrep_reserves([{"location": "/news", "tdm-reservation": 1}], "/sport/a")
+    exact = [{"location": "/page$", "tdm-reservation": 1}]
+    assert polite.tdmrep_reserves(exact, "/page")
+    assert not polite.tdmrep_reserves(exact, "/page/2")
+
+
+def test_tdmrep_file_behind_a_redirect_still_counts(gate, web):
+    web.get("https://x.test/robots.txt").respond(200, text=ALLOW_ALL)
+    web.get("https://x.test/.well-known/tdmrep.json").respond(
+        301, headers={"location": "https://x.test/tdm/policy.json"}
+    )
+    web.get("https://x.test/tdm/policy.json").respond(
+        200, json=[{"location": "/", "tdm-reservation": 1}]
+    )
+    with pytest.raises(polite.Refused) as e:
+        gate.check("https://x.test/news/a", "scrape")
+    assert e.value.reason == "tdmrep"
+
+
+@pytest.mark.parametrize("failure", ["503", "connect"])
+def test_tdmrep_unreachable_refuses_scraping(gate, web, failure):
+    web.get("https://x.test/robots.txt").respond(200, text=ALLOW_ALL)
+    route = web.get("https://x.test/.well-known/tdmrep.json")
+    if failure == "503":
+        route.respond(503)
+    else:
+        route.mock(side_effect=httpx.ConnectError("down"))
+    with pytest.raises(polite.Refused) as e:
+        gate.check("https://x.test/news/a", "scrape")
+    assert e.value.reason == "unreachable"
+
+
+def test_an_unreachable_tdmrep_file_is_asked_once_per_host(gate, web):
+    # Every article of a site whose tdmrep.json is down cost one more rate-limited request.
+    web.get("https://x.test/robots.txt").respond(200, text=ALLOW_ALL)
+    route = web.get("https://x.test/.well-known/tdmrep.json").respond(503)
+    for path in ("/a", "/b"):
+        with pytest.raises(polite.Refused) as e:
+            gate.check(f"https://x.test{path}", "scrape")
+        assert e.value.reason == "unreachable"
+    assert route.call_count == 1
+
+
+def test_tdmrep_location_matches_the_query_too(gate, web):
+    # Like robots.txt, a location is matched against the path and the query.
+    rules = [{"location": "/search?q=*", "tdm-reservation": 1}]
+    assert polite.tdmrep_reserves(rules, "/search?q=x")
+    web.get("https://x.test/robots.txt").respond(200, text=ALLOW_ALL)
+    web.get("https://x.test/.well-known/tdmrep.json").respond(200, json=rules)
+    gate.check("https://x.test/search", "scrape")
+    with pytest.raises(polite.Refused) as e:
+        gate.check("https://x.test/search?q=1", "scrape")
+    assert e.value.reason == "tdmrep"
+
+
+def test_an_empty_tdmrep_location_matches_nothing():
+    # Like an empty robots.txt pattern: it must not reserve the whole site.
+    assert not polite.tdmrep_reserves([{"location": "", "tdm-reservation": 1}], "/news/a")
+
+
 def test_tdmrep_first_matching_rule_decides():
     rules = [
         {"location": "/open/*", "tdm-reservation": 0},
@@ -201,7 +264,6 @@ def test_tdmrep_first_matching_rule_decides():
 @pytest.mark.parametrize(
     "response",
     [
-        httpx.Response(500),
         httpx.Response(200, text="<html>no</html>"),
         httpx.Response(200, json={"not": "a list"}),
     ],
@@ -313,3 +375,76 @@ def test_crawl_delay_over_cap_refuses_instead_of_sleeping(gate, web, clock):
     with pytest.raises(polite.Refused) as e:
         gate.fetch("https://x.test/rss", "feed")
     assert e.value.reason == "crawl-delay" and clock.slept == []
+
+
+# --- limits -------------------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "url", ["http://169.254.169.254/latest/meta-data", "http://127.0.0.1:8080/", "ftp://x.test/a"]
+)
+def test_private_or_non_web_addresses_are_never_fetched(gate, web, url):
+    route = web.route().respond(200)
+    with pytest.raises(polite.Refused) as e:
+        gate.fetch(url, "scrape")
+    assert e.value.reason == "private" and not route.called
+
+
+def test_a_name_that_resolves_to_a_private_address_is_refused(gate, web, monkeypatch):
+    monkeypatch.setattr(polite, "_resolve", lambda host: ["10.0.0.5"])
+    route = web.route().respond(200)
+    with pytest.raises(polite.Refused) as e:
+        gate.fetch("https://intranet.x.test/a", "feed")
+    assert e.value.reason == "private" and not route.called
+
+
+def test_a_redirect_to_a_private_address_is_refused(gate, web):
+    web.get("https://x.test/robots.txt").respond(200, text=ALLOW_ALL)
+    web.get("https://x.test/a").respond(302, headers={"location": "http://127.0.0.1/admin"})
+    inner = web.get("http://127.0.0.1/admin").respond(200)
+    with pytest.raises(polite.Refused) as e:
+        gate.fetch("https://x.test/a", "feed")
+    assert e.value.reason == "private" and not inner.called
+
+
+def test_a_huge_response_is_cut_off(gate, web):
+    web.get("https://x.test/robots.txt").respond(200, text=ALLOW_ALL)
+    web.get("https://x.test/big").respond(200, content=b"x" * (polite.MAX_BYTES + 1))
+    with pytest.raises(polite.Refused) as e:
+        gate.fetch("https://x.test/big", "feed")
+    assert e.value.reason == "too-large"
+
+
+def test_a_normal_response_still_reads_whole(gate, web):
+    web.get("https://x.test/robots.txt").respond(200, text=ALLOW_ALL)
+    web.get("https://x.test/ok").respond(200, text="hello", headers={"x-a": "1"})
+    r = gate.fetch("https://x.test/ok", "feed")
+    assert r.text == "hello" and r.headers["x-a"] == "1"
+
+
+@pytest.mark.parametrize("path", ["/robots.txt", "/.well-known/tdmrep.json"])
+def test_redirects_httpx_follows_itself_are_address_checked_too(gate, web, path):
+    # robots.txt and tdmrep.json follow redirects inside httpx, not in Gate.fetch.
+    if path != "/robots.txt":
+        web.get("https://x.test/robots.txt").respond(200, text=ALLOW_ALL)
+    web.get(f"https://x.test{path}").respond(302, headers={"location": "http://169.254.169.254/x"})
+    inner = web.get("http://169.254.169.254/x").respond(200, text=ALLOW_ALL)
+    with pytest.raises(polite.Refused) as e:
+        gate.check("https://x.test/news/a", "scrape")
+    assert e.value.reason in ("private", "unreachable") and not inner.called
+
+
+def test_waits_that_would_pass_the_run_deadline_are_not_taken(gate, web, clock):
+    # A 60 s crawl-delay near the end of the run would push it past the job's limit.
+    web.get("https://x.test/robots.txt").respond(200, text="User-agent: *\nCrawl-delay: 60\n")
+    web.get("https://x.test/a").respond(200)
+    gate.stop_at = clock() + 30
+    with pytest.raises(polite.Refused) as e:
+        gate.fetch("https://x.test/a", "feed")  # robots now, then a 60 s wait for /a
+    assert e.value.reason == "deadline"
+    assert clock() <= gate.stop_at
+
+
+def test_a_tdmrep_rule_without_a_location_matches_nothing():
+    rules = [{"tdm-reservation": 0}, {"location": "/", "tdm-reservation": 1}]
+    assert polite.tdmrep_reserves(rules, "/news/a")

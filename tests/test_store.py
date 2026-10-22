@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 
 import pandas as pd
 
-from sentiment import store
+from sentiment import hfsync, store
 from sentiment.rows import COLUMNS, DTYPES, new_row
 
 OCT = datetime(2026, 10, 8, 12, tzinfo=UTC)
@@ -88,7 +88,7 @@ def test_gold_roundtrip_and_empty(tmp_path):
             }
         ]
     ).astype(store.GOLD_DTYPES)
-    assert store.write_gold(tmp_path, gold) == "gold.parquet"
+    assert store.write_gold(tmp_path, gold) == store.LOCAL_GOLD  # unpushed labels
     assert store.read_gold(tmp_path).equals(gold)
 
 
@@ -104,3 +104,76 @@ def test_status_roundtrip(tmp_path):
     assert store.read_status(tmp_path) is None
     assert store.write_status(tmp_path, {"run_at": "x", "sources": []}) == "status.json"
     assert store.read_status(tmp_path) == {"run_at": "x", "sources": []}
+
+
+NOW = datetime(2026, 10, 22, tzinfo=UTC)
+
+
+def labels(n, label="positive"):
+    rows = [
+        {
+            "url_hash": f"{i:032x}",
+            "title": f"t{i}",
+            "source": "hn",
+            "lang": "en",
+            "label": label,
+            "labelled_at": NOW,
+            "split": store.split_of(f"{i:032x}"),
+            "label2": None,
+            "relabelled_at": None,
+        }
+        for i in range(n)
+    ]
+    return pd.DataFrame(rows, columns=list(store.GOLD_DTYPES)).astype(store.GOLD_DTYPES)
+
+
+def test_pull_keeps_unpushed_labels(monkeypatch, tmp_path):
+    # The Hub has gold.parquet; a pull rewrites it. Labels not pushed yet must survive.
+    labels(0).to_parquet(tmp_path / store.GOLD, index=False)
+    store.write_gold(tmp_path, labels(30))
+
+    def hub(repo_id, **kw):
+        labels(0).to_parquet(kw["local_dir"] / store.GOLD, index=False)
+        return str(kw["local_dir"])
+
+    monkeypatch.setattr(hfsync, "snapshot_download", hub)
+    hfsync.pull("me/ds", None, tmp_path)
+    assert len(store.read_gold(tmp_path)) == 30
+
+
+def test_a_local_label_wins_over_the_hub_copy(tmp_path):
+    labels(3, "negative").to_parquet(tmp_path / store.GOLD, index=False)
+    store.write_gold(tmp_path, labels(1, "positive"))
+    gold = store.read_gold(tmp_path).set_index("url_hash")["label"]
+    assert gold.to_dict() == {
+        f"{0:032x}": "positive",
+        f"{1:032x}": "negative",
+        f"{2:032x}": "negative",
+    }
+
+
+def test_two_tabs_never_overwrite_each_others_labels(tmp_path):
+    # Each tab holds the gold set it loaded; saving it whole dropped the other tab's labels.
+    tab_a, tab_b = labels(2).iloc[[0]], labels(2).iloc[[1]]
+    store.write_gold(tmp_path, tab_a)
+    store.write_gold(tmp_path, tab_b)  # tab B never saw tab A's label
+    assert sorted(store.read_gold(tmp_path)["url_hash"]) == [f"{0:032x}", f"{1:032x}"]
+
+
+def test_publish_then_clear(tmp_path):
+    store.write_gold(tmp_path, labels(5))
+    published = store.publish_gold(tmp_path)
+    assert len(pd.read_parquet(tmp_path / store.GOLD)) == 5
+    store.clear_local_gold(tmp_path, published)
+    assert not (tmp_path / store.LOCAL_GOLD).exists()
+    assert len(store.read_gold(tmp_path)) == 5
+
+
+def test_a_label_saved_during_a_push_stays_local(tmp_path):
+    # Another tab labels while this one pushes: only what was pushed leaves the local file.
+    store.write_gold(tmp_path, labels(1))
+    published = store.publish_gold(tmp_path)
+    store.write_gold(tmp_path, labels(2).iloc[[1]])  # the other tab, mid-push
+    store.clear_local_gold(tmp_path, published)
+    left = store._read(tmp_path / store.LOCAL_GOLD)
+    assert list(left["url_hash"]) == [f"{1:032x}"]

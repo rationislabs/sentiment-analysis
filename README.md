@@ -110,11 +110,11 @@ uv run inv app --local          # dashboard with the Label tab on http://127.0.0
 | `uv run inv app [--local]` | dashboard with the Label tab (`LABEL_MODE=1`) |
 | `uv run inv train [--skip-bert]` | train TF-IDF and DistilBERT into `models/` (about an hour on CPU) |
 | `uv run inv evaluate` | score `models/` on the gold set: `metrics.json`, `model.yaml`, model card |
-| `uv run inv push-model` | upload `models/` to the private model repo |
+| `uv run inv push-model` | upload `models/` to the private model repo and pin that commit in `models.lock` |
 | `uv run inv hub-init` | create both private Hub repos |
 | `uv run inv fixtures` | re-record the robots.txt fixtures through the gate (feeds and front pages are invented) |
 
-Settings (`.env`, see `.env.example`): `HF_TOKEN`, `HF_DATASET_REPO`, `HF_MODEL_REPO`,
+Settings (`.env`, see `.env.example`): `HF_TOKEN`, `HF_MODEL_TOKEN` (optional, read-only), `HF_DATASET_REPO`, `HF_MODEL_REPO`,
 `SENTIMENT_DATA_DIR`, `SENTIMENT_MODEL_DIR`, `LABEL_MODE`.
 
 ## One-time setup (free plans only)
@@ -122,7 +122,8 @@ Settings (`.env`, see `.env.example`): `HF_TOKEN`, `HF_DATASET_REPO`, `HF_MODEL_
 1. Create a Hugging Face account for Rationis Labs and two tokens: one with **write** access
    (local use and GitHub Actions), one **read-only** (the dashboard).
 2. Put the write token in `.env` as `HF_TOKEN`, then `uv run inv hub-init`.
-3. In the GitHub repo: secret `HF_TOKEN` (write token); variables `HF_DATASET_REPO` and
+3. In the GitHub repo: secret `HF_TOKEN` (write token), optionally secret `HF_MODEL_TOKEN`
+   (the read-only one, used to download models); variables `HF_DATASET_REPO` and
    `HF_MODEL_REPO`. The cron stays off until `HF_DATASET_REPO` is set.
 4. Streamlit Community Cloud: new app from this repo, main file `app/main.py`, Python 3.12,
    secret `HF_TOKEN` = the read-only token, plus `HF_DATASET_REPO`. Invite the viewers you want.
@@ -130,6 +131,7 @@ Settings (`.env`, see `.env.example`): `HF_TOKEN`, `HF_DATASET_REPO`, `HF_MODEL_
    press "Push labels" (until then they are kept in `~/.cache/sentiment-data`). A week later,
    do the 50 blind relabels the tab offers.
 6. `uv run inv train`, `uv run inv evaluate`, `uv run inv push-model`, then commit
-   `metrics.json` and `model.yaml`.
+   `metrics.json`, `model.yaml` and `models.lock`. The pipeline downloads only the commit
+   `models.lock` names, and loads TF-IDF from skops files, never pickles.
 
 Contact: [github.com/rationislabs](https://github.com/rationislabs)

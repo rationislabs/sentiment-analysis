@@ -60,13 +60,33 @@ def test_tfidf_missing_language_is_none():
 
 
 def test_tfidf_roundtrip(tmp_path):
-    import joblib
+    import skops.io
 
     m = toy_tfidf(("de", "en"))
     for lang, p in m._pipelines.items():
-        joblib.dump(p, tmp_path / score.TFIDF_FILE.format(lang=lang))
+        skops.io.dump(p, tmp_path / score.TFIDF_FILE.format(lang=lang))
     loaded = score.Tfidf.load(tmp_path)
     assert loaded.predict(["great day"], "de")[0].label == "positive"
+
+
+def test_a_pickle_in_the_model_repo_is_never_loaded(tmp_path):
+    # joblib.load runs whatever the file says: a model repo is not trusted that far.
+    import joblib
+
+    m = toy_tfidf(("de",))
+    joblib.dump(m._pipelines["de"], tmp_path / "tfidf-de.joblib")
+    assert score.TFIDF_FILE.endswith(".skops")
+    assert score.Tfidf.load(tmp_path) is None
+
+
+def test_revision_file(tmp_path):
+    lock = tmp_path / "models.lock"
+    assert score.read_revision(lock) is None
+    score.write_revision(lock, "a" * 40)
+    assert score.read_revision(lock) == "a" * 40
+    lock.write_text("main\n")
+    with pytest.raises(ValueError):
+        score.read_revision(lock)
 
 
 def test_tfidf_load_without_files_is_none(tmp_path):
@@ -83,10 +103,10 @@ def test_load_by_name(tmp_path):
 
 
 def test_scorer_uses_choice_per_language(tmp_path):
-    import joblib
+    import skops.io
 
     p = score.Tfidf.build().fit([t for t, _ in TOY], [lab for _, lab in TOY])
-    joblib.dump(p, tmp_path / "tfidf-de.joblib")
+    skops.io.dump(p, tmp_path / "tfidf-de.skops")
     s = score.Scorer({"de": "tfidf", "en": "vader"}, tmp_path)
     name, preds = s.score(["great day"], "de")
     assert name == "tfidf" and preds[0].label == "positive"

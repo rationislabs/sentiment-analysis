@@ -5,24 +5,26 @@ report or a log line."""
 
 from __future__ import annotations
 
+import xml.etree.ElementTree as ET
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlsplit
 
+import defusedxml.ElementTree as DefusedET
 import feedparser
 import httpx
 import yaml
 from bs4 import BeautifulSoup
+from defusedxml import DefusedXmlException
 
 from .polite import Gate, Refused
 from .rows import new_row, url_hash
 
 MIN_BODY = 200  # shorter extracted text: a paywall or consent wall, not an article
 MAX_BODIES = 30  # per source per run
-BODY_BUDGET = 180.0  # seconds per source, so body scraping cannot eat the 10-minute run
 
 ScoreBody = Callable[[str, str], str | None]
 
@@ -78,8 +80,15 @@ def collect(
     now: datetime,
     score_body: ScoreBody | None = None,
     seen: set[str] | frozenset[str] = frozenset(),
+    *,
+    deadline: float = float("inf"),
 ) -> tuple[list[dict], Report]:
+    """`deadline` is a gate.now() value shared by the whole run: past it, nothing more is
+    fetched, so the run still pushes what it has before the job's time limit."""
     report = Report(source.name)
+    if gate.now() > deadline:
+        report.errors.append("skipped: run deadline reached")
+        return [], report
     try:
         rows = read_feed(source, gate, now)
     except Refused as e:
@@ -90,21 +99,25 @@ def collect(
         return [], report
     report.fetched = len(rows)
     if source.frontpage and source.frontpage_url:
-        _front_page(source, gate, rows, report)
+        try:
+            _front_page(source, gate, rows, report)
+        except Exception as e:  # noqa: BLE001 — a broken selector must not cost the feed rows
+            report.errors.append(f"front page: {e!r}")
     if source.body and score_body is not None:
         fresh = [r for r in rows if r["url_hash"] not in seen][:MAX_BODIES]
-        _bodies(source, gate, fresh, score_body, report)
+        _bodies(source, gate, fresh, score_body, report, deadline)
     return rows, report
 
 
 def read_feed(source: Source, gate: Gate, now: datetime) -> list[dict]:
     r = gate.fetch(source.rss, "feed")
     r.raise_for_status()
+    _refuse_entity_expansion(source.rss, r.content)
     rows: dict[str, dict] = {}
     for e in feedparser.parse(r.content).entries:
         title, link = (e.get("title") or "").strip(), e.get("link")
-        if not title or not link:
-            continue
+        if not title or not link or urlsplit(link).scheme not in ("http", "https"):
+            continue  # a javascript: or file: link would be clickable in the dashboard
         t = e.get("published_parsed") or e.get("updated_parsed")
         row = new_row(
             url=link,
@@ -116,6 +129,17 @@ def read_feed(source: Source, gate: Gate, now: datetime) -> list[dict]:
         )
         rows.setdefault(row["url_hash"], row)
     return list(rows.values())
+
+
+def _refuse_entity_expansion(url: str, content: bytes) -> None:
+    """A feed that declares entities ("billion laughs") is refused before feedparser expands
+    them. Malformed XML is left to feedparser, which copes with most of it."""
+    try:
+        DefusedET.fromstring(content)
+    except (DefusedXmlException, ValueError) as e:  # ValueError: an encoding expat cannot read
+        raise Refused(url, "unsafe-xml") from e
+    except ET.ParseError:
+        pass
 
 
 def front_page_ranks(
@@ -169,12 +193,16 @@ def body_text(html: str, selector: str | None) -> str:
 
 
 def _bodies(
-    source: Source, gate: Gate, rows: list[dict], score_body: ScoreBody, report: Report
+    source: Source,
+    gate: Gate,
+    rows: list[dict],
+    score_body: ScoreBody,
+    report: Report,
+    deadline: float,
 ) -> None:
-    start = gate.now()
     for i, row in enumerate(rows):
-        if gate.now() - start > BODY_BUDGET:
-            report.errors.append(f"body: time budget spent, {len(rows) - i} skipped")
+        if gate.now() > deadline:
+            report.errors.append(f"body: run deadline reached, {len(rows) - i} skipped")
             return
         try:
             r = gate.fetch(row["url"], "scrape")
@@ -186,6 +214,10 @@ def _bodies(
             continue
         if r.status_code != 200 or "html" not in r.headers.get("content-type", ""):
             continue
-        text = body_text(r.text, source.body_selector)
-        if len(text) >= MIN_BODY:
-            row["body_label"] = score_body(text, source.lang)
+        try:
+            text = body_text(r.text, source.body_selector)
+            if len(text) >= MIN_BODY:
+                row["body_label"] = score_body(text, source.lang)
+        except Exception as e:  # noqa: BLE001 — one odd article never costs the source
+            # The type only: a message could quote the article, which is never stored.
+            report.errors.append(f"body: {type(e).__name__}")

@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           enable-cache: true
@@ -18,5 +20,5 @@ jobs:
       - run: uv run ruff check . && uv run ruff format --check .
       - run: uv run pytest
       - run: |
-          uv export --frozen --no-emit-project --no-emit-workspace -o "$RUNNER_TEMP/requirements.txt"
-          uvx pip-audit --disable-pip -r "$RUNNER_TEMP/requirements.txt"
+          uv export --frozen --no-emit-project --no-emit-workspace --all-groups -o "$RUNNER_TEMP/requirements.txt"
+          uvx pip-audit==2.10.1 --disable-pip -r "$RUNNER_TEMP/requirements.txt"

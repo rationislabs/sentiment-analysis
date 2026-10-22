@@ -17,9 +17,12 @@ import pandas as pd
 from . import hfsync, polite, store
 from .collect import Report, collect, load_sources
 from .config import ROOT, Settings
-from .score import LANGS, Scorer, read_choice
+from .score import LANGS, Scorer, read_choice, read_revision
 
 log = logging.getLogger(__name__)
+# Seconds for fetching, of collect.yml's 10 minutes: scoring and the push need the rest,
+# and one fetch can still wait up to polite.MAX_CRAWL_DELAY past it.
+RUN_BUDGET = 420.0
 
 
 def run(
@@ -27,6 +30,7 @@ def run(
     *,
     sources_path: Path = ROOT / "sources.yaml",
     choice_path: Path = ROOT / "model.yaml",
+    lock_path: Path = ROOT / "models.lock",
     now: datetime | None = None,
     clock=time.monotonic,
     sleep=time.sleep,
@@ -38,7 +42,9 @@ def run(
     if not local:
         hfsync.pull(settings.dataset_repo, settings.hf_token, work)
     model_dir = settings.model_dir or (
-        None if local else hfsync.pull_models(settings.model_repo, settings.hf_token)
+        None
+        if local
+        else hfsync.pull_models(settings.model_repo, settings.model_token, read_revision(lock_path))
     )
     scorer = Scorer(read_choice(choice_path), model_dir)
 
@@ -48,10 +54,16 @@ def run(
     reports: list[Report] = []
     with polite.client() as client:
         gate = polite.Gate(client, clock=clock, sleep=sleep)
+        deadline = gate.stop_at = gate.now() + RUN_BUDGET
         for source in load_sources(sources_path):
             try:
                 got, report = collect(
-                    source, gate, now, scorer.label if source.body else None, seen
+                    source,
+                    gate,
+                    now,
+                    scorer.label if source.body else None,
+                    seen,
+                    deadline=deadline,
                 )
             except Exception as e:  # noqa: BLE001 — one broken site never stops the others
                 log.exception("source %s failed", source.name)

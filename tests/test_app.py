@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -191,3 +192,69 @@ def test_hub_mode_offers_push_in_a_fresh_session(tmp_path, monkeypatch):
     at = start()
     assert not at.exception
     assert any(b.key == "push" for b in at.button)
+
+
+def test_push_sends_every_label_and_clears_the_local_copy(tmp_path, monkeypatch):
+    monkeypatch.delenv("SENTIMENT_DATA_DIR", raising=False)
+    monkeypatch.setenv("SENTIMENT_METRICS_PATH", str(tmp_path / "metrics.json"))
+    monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path / "cache"))
+    monkeypatch.setenv("HF_DATASET_REPO", "me/ds")
+    monkeypatch.setenv("LABEL_MODE", "1")
+    from sentiment import dashboard, hfsync
+
+    def pull(repo_id, **kw):
+        root = kw["local_dir"]
+        root.mkdir(parents=True, exist_ok=True)
+        r = new_row(
+            url="https://x.test/1",
+            title="Headline",
+            source="hn",
+            lang="en",
+            published_at=None,
+            fetched_at=datetime(2026, 10, 8, tzinfo=UTC),
+        )
+        df = store.frame([r])
+        store.write_headlines(root, df, set(store.months(df)))
+        if not (root / store.LOCAL_GOLD).exists():
+            store.write_gold(
+                root,
+                dashboard.add_label(
+                    store.read_gold(root), df.iloc[0], "neutral", datetime(2026, 10, 8, tzinfo=UTC)
+                ),
+            )
+        return str(root)
+
+    sent = []
+    monkeypatch.setattr(hfsync, "snapshot_download", pull)
+    monkeypatch.setattr(hfsync, "push", lambda repo, token, root, paths, msg: sent.append(paths))
+    at = start()
+    next(b for b in at.button if b.key == "push").click().run()
+    root = tmp_path / "cache" / "sentiment-data"
+    assert sent == [[store.GOLD]]
+    assert len(store.read_gold(root)) == 1
+    assert not (root / store.LOCAL_GOLD).exists()
+
+
+def test_label_tab_shows_the_headline_as_plain_text(data, monkeypatch):
+    # A title is not markdown: "![](https://tracker/x)" must not load a remote image.
+    monkeypatch.setenv("LABEL_MODE", "1")
+    at = start()
+    assert any("Headline number" in str(e.value) for e in at.markdown)  # shown as escaped text
+    from sentiment import dashboard
+
+    out = dashboard.plain_markdown("![](https://tracker/x) *b* :red[x] $x$ <b> `c` # h")
+    assert re.search(r"(?<!\\)[!\[\]()*:$<>`#]", out) is None, out
+
+
+def test_a_label_saved_in_another_tab_survives_a_click_here(data, monkeypatch):
+    monkeypatch.setenv("LABEL_MODE", "1")
+    at = start()  # this tab loaded the gold set before the other tab saved
+    other = store.read_gold(data)
+    from sentiment import dashboard
+
+    here = next(str(e.value) for e in at.markdown if "Headline number" in str(e.value))
+    first = next(r for _, r in store.read_headlines(data).iterrows() if r["title"][-1] not in here)
+    store.write_gold(data, dashboard.add_label(other, first, "negative", datetime.now(UTC)))
+    at.button(key="label-positive").click().run()
+    assert not at.exception
+    assert len(store.read_gold(data)) == 2

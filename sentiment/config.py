@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 @dataclass(frozen=True)
 class Settings:
     hf_token: str | None = field(repr=False)  # never in a repr, a log line or an error
+    model_token: str | None = field(repr=False)  # read-only token for the model repo
     dataset_repo: str
     model_repo: str
     data_dir: Path | None  # set: work on this local folder only, never touch the Hub
@@ -32,6 +33,8 @@ def load(env: Mapping[str, str] | None = None) -> Settings:
 
     return Settings(
         hf_token=get("HF_TOKEN") or None,
+        # A read-only token is enough to download models; the write token is the fallback.
+        model_token=get("HF_MODEL_TOKEN") or get("HF_TOKEN") or None,
         dataset_repo=get("HF_DATASET_REPO") or "rationislabs/sentiment-headlines",
         model_repo=get("HF_MODEL_REPO") or "rationislabs/sentiment-models",
         data_dir=path("SENTIMENT_DATA_DIR"),

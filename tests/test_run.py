@@ -1,8 +1,8 @@
 from datetime import UTC, datetime
 from pathlib import Path
 
-import joblib
 import pytest
+import skops.io
 
 from sentiment import config, run, score, store
 from sentiment.__main__ import main
@@ -61,7 +61,7 @@ def files(tmp_path):
 
 def toy_model(models: Path):
     p = score.Tfidf.build().fit([t for t, _ in TOY], [lab for _, lab in TOY])
-    joblib.dump(p, models / "tfidf-en.joblib")
+    skops.io.dump(p, models / "tfidf-en.skops")
 
 
 def go(settings, files, clock, now=NOW):
@@ -192,7 +192,7 @@ def test_hub_mode_pulls_and_pushes_changed_files(tmp_path, site, files, clock, m
         return dest
 
     monkeypatch.setattr(run.hfsync, "pull", pull)
-    monkeypatch.setattr(run.hfsync, "pull_models", lambda repo, token: None)
+    monkeypatch.setattr(run.hfsync, "pull_models", lambda repo, token, revision: None)
     monkeypatch.setattr(
         run.hfsync,
         "push",
@@ -211,7 +211,7 @@ def test_hub_mode_pulls_and_pushes_changed_files(tmp_path, site, files, clock, m
 
 def test_hub_push_failure_fails_the_run(tmp_path, site, files, clock, monkeypatch):
     monkeypatch.setattr(run.hfsync, "pull", lambda repo, token, dest: dest)
-    monkeypatch.setattr(run.hfsync, "pull_models", lambda repo, token: None)
+    monkeypatch.setattr(run.hfsync, "pull_models", lambda repo, token, revision: None)
 
     def boom(*a, **k):
         raise OSError("hub down")
@@ -240,3 +240,19 @@ def test_main_usage_and_missing_token(monkeypatch, capsys):
     monkeypatch.delenv("SENTIMENT_DATA_DIR", raising=False)
     assert main(["collect"]) == 2
     assert "HF_TOKEN is not set" in capsys.readouterr().err
+
+
+def test_every_source_shares_one_run_deadline(tmp_path, files, clock, monkeypatch):
+    seen, stops = [], []
+    real = run.collect
+
+    def spy(source, gate, now, score_body=None, seen_hashes=frozenset(), *, deadline):
+        seen.append(deadline)
+        stops.append(gate.stop_at)  # waits inside the gate stop at the deadline too
+        return [], real.__globals__["Report"](source.name)
+
+    monkeypatch.setattr(run, "collect", spy)
+    go(local(tmp_path), files, clock)
+    assert seen and len(set(seen)) == 1
+    assert seen[0] == pytest.approx(clock() + run.RUN_BUDGET, abs=1)
+    assert stops == seen

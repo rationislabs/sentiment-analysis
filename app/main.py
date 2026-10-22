@@ -116,7 +116,7 @@ def render_label(headlines: pd.DataFrame, root: Path) -> None:
     if row is None:
         st.info("Nothing left to label: wait for the next collection run.")
     else:
-        st.markdown(f"### {row['title']}")
+        st.markdown(f"**{dashboard.plain_markdown(row['title'])}**")  # never markdown itself
         st.caption(f"{row['source']} · {LANG_NAMES[row['lang']]}")
         for col, label in zip(st.columns(3), LABELS, strict=True):
             if col.button(label.capitalize(), key=f"{mode}-{label}"):
@@ -124,8 +124,9 @@ def render_label(headlines: pd.DataFrame, root: Path) -> None:
                     gold = dashboard.add_relabel(gold, row["url_hash"], label, now)
                 else:
                     gold = dashboard.add_label(gold, row, label, now)
-                store.write_gold(root, gold)
-                st.session_state.gold = gold
+                # this label only: the rest of this tab's copy may be older than the file
+                store.write_gold(root, gold[gold["url_hash"] == row["url_hash"]])
+                st.session_state.gold = store.read_gold(root)
                 st.session_state.unpushed += 1
                 st.rerun()
     # Offered whenever there are labels, not only after labelling in this session: a refresh
@@ -135,13 +136,19 @@ def render_label(headlines: pd.DataFrame, root: Path) -> None:
         text = f"Push {unpushed} new labels to the Hub" if unpushed else "Push labels to the Hub"
         if st.button(text, key="push"):
             try:
+                published = store.publish_gold(root)
                 hfsync.push(
-                    settings.dataset_repo, settings.hf_token, root, [store.GOLD], "gold labels"
+                    settings.dataset_repo,
+                    settings.hf_token,
+                    root,
+                    [store.GOLD],
+                    "gold labels",
                 )
             except Exception:  # noqa: BLE001 — keep the labels on disk; say so
                 logging.getLogger(__name__).exception("gold push failed")
                 st.error("Push failed; the labels are saved locally. Try again.")
             else:
+                store.clear_local_gold(root, published)
                 st.session_state.unpushed = 0
                 st.success("Pushed.")
 

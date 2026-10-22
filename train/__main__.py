@@ -2,7 +2,7 @@
 
 fit       train TF-IDF (and DistilBERT unless --skip-bert) into models/
 evaluate  score models/ on the gold set → metrics.json, model.yaml, models/README.md
-push      upload models/ to the private model repo"""
+push      upload models/ to the private model repo and pin that commit in models.lock"""
 
 from __future__ import annotations
 
@@ -50,8 +50,9 @@ def main(argv: list[str] | None = None) -> int:
         (MODELS_DIR / "README.md").write_text(evaluation.model_card(metrics))
         print(f"Wrote {settings.metrics_path.name}, model.yaml and the model card")
     else:
-        hfsync.push_folder(settings.model_repo, settings.hf_token, MODELS_DIR, "models")
-        print(f"Pushed {MODELS_DIR} to {settings.model_repo}")
+        rev = hfsync.push_folder(settings.model_repo, settings.hf_token, MODELS_DIR, "models")
+        score.write_revision(config.ROOT / "models.lock", rev)
+        print(f"Pushed {MODELS_DIR} to {settings.model_repo} at {rev}; commit models.lock")
     return 0
 
 

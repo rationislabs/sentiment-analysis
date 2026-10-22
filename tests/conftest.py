@@ -28,6 +28,13 @@ def clock() -> Clock:
     return Clock()
 
 
+@pytest.fixture(autouse=True)
+def public_dns(monkeypatch):
+    """Test hosts (x.test, …) do not resolve: every name is a public address unless a test
+    says otherwise."""
+    monkeypatch.setattr(polite, "_resolve", lambda host: ["93.184.216.34"])
+
+
 @pytest.fixture
 def web():
     """Every HTTP request is mocked; an unmocked one fails the test."""

@@ -21,11 +21,26 @@ def pull(repo: str, token: str | None, dest: Path) -> Path:
     return dest
 
 
-def pull_models(repo: str, token: str | None) -> Path | None:
-    """The model repo in the Hub cache (~/.cache/huggingface, which Actions caches), or None
-    when it does not exist yet."""
+# What the pipeline loads from the model repo: skops files and the DistilBERT folder.
+MODEL_FILES = ("tfidf-*.skops", "distilbert/*")
+
+
+def pull_models(repo: str, token: str | None, revision: str | None) -> Path | None:
+    """The pinned commit of the model repo in the Hub cache (~/.cache/huggingface, which
+    Actions caches), or None when nothing is pinned yet or the repo does not exist."""
+    if revision is None:
+        log.warning("no models.lock: headlines stay unscored")
+        return None
     try:
-        return Path(snapshot_download(repo, repo_type="model", token=token))
+        return Path(
+            snapshot_download(
+                repo,
+                repo_type="model",
+                token=token,
+                revision=revision,
+                allow_patterns=list(MODEL_FILES),
+            )
+        )
     except RepositoryNotFoundError:
         log.warning("model repo %s not found: headlines stay unscored", repo)
         return None
@@ -39,10 +54,12 @@ def push(repo: str, token: str | None, root: Path, paths: list[str], message: st
     HfApi(token=token).create_commit(repo, ops, commit_message=message, repo_type="dataset")
 
 
-def push_folder(repo: str, token: str | None, folder: Path, message: str) -> None:
-    HfApi(token=token).upload_folder(
+def push_folder(repo: str, token: str | None, folder: Path, message: str) -> str:
+    """Upload folder; returns the new commit's hash, for models.lock."""
+    info = HfApi(token=token).upload_folder(
         repo_id=repo, folder_path=folder, repo_type="model", commit_message=message
     )
+    return info.oid
 
 
 def init_repos(settings: Settings) -> None:

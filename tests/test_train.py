@@ -54,7 +54,7 @@ def toy_df(langs=("de", "en")):
 
 def test_tfidf_fit_and_save_load_with_score(tmp_path):
     tfidf.save(tfidf.fit(toy_df()), tmp_path)
-    assert sorted(p.name for p in tmp_path.iterdir()) == ["tfidf-de.joblib", "tfidf-en.joblib"]
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["tfidf-de.skops", "tfidf-en.skops"]
     m = score.Tfidf.load(tmp_path)
     assert m.predict(["great day"], "de")[0].label == "positive"
 
@@ -142,3 +142,13 @@ def test_bert_finetune_smoke(tmp_path):
     bert.finetune(toy_df().head(16), tmp_path, epochs=1, batch=8)
     got = score.Bert(tmp_path / score.BERT_DIR).predict(["great day"], "en")
     assert got[0].label in score.LABELS
+
+
+def test_push_pins_the_new_commit_in_models_lock(monkeypatch, tmp_path):
+    import train.__main__ as cli
+    from sentiment import config, hfsync
+
+    monkeypatch.setattr(config, "ROOT", tmp_path)
+    monkeypatch.setattr(hfsync, "push_folder", lambda repo, token, folder, msg: "e" * 40)
+    assert cli.main(["push"]) == 0
+    assert score.read_revision(tmp_path / "models.lock") == "e" * 40

@@ -19,6 +19,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           enable-cache: true
@@ -26,10 +28,12 @@ jobs:
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/huggingface/hub
-          key: hf-models-${{ hashFiles('model.yaml') }}
-          restore-keys: hf-models-
+          # Exact match only: models.lock pins the commit, and a cache restored by prefix
+          # could hold files from another one.
+          key: hf-models-${{ hashFiles('model.yaml', 'models.lock') }}
       - run: uv run --no-sync python -m sentiment collect
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_MODEL_TOKEN: ${{ secrets.HF_MODEL_TOKEN }} # read-only; HF_TOKEN when unset
           HF_DATASET_REPO: ${{ vars.HF_DATASET_REPO }}
           HF_MODEL_REPO: ${{ vars.HF_MODEL_REPO }}

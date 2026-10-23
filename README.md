@@ -12,6 +12,10 @@ Streamlit Community Cloud ◄── read-only token ─────────�
 local only: train ─► evaluate on the gold set ─► winner ─► Hugging Face model repo (private)
 ```
 
+| Trends | Headlines | Label |
+|---|---|---|
+| ![Daily sentiment per source](docs/screenshots/trends.png) | ![Scored headlines, searchable](docs/screenshots/headlines.png) | ![The labelling tab used to build the gold set](docs/screenshots/label.png) |
+
 ## Sources
 
 | Source | Language | Feed | Scrapers today |
